@@ -1,0 +1,12 @@
+1) select employee_id AS "EMPLOYEE NUMBER",Last_name, JOB_ID as "JOB CODE", HIRE_DATE as "STARTDATE"
+from employees
+
+2) select  distinct JOB_ID as "JOB CODE"
+from employees
+
+3)select employee_id AS "EMP#",Last_name as "Employee", JOB_ID as "JOB", HIRE_DATE 
+from employees
+
+4)select LAST_NAME|| ', ' ||JOB_ID AS "Employee and Title"
+from employees
+
