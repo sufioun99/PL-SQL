@@ -1,0 +1,10 @@
+Declare
+sal_increase employees.salary%type :=800;
+v_rows_updated varchar2(30);
+BEGIN
+UPDATE employees
+set salary = salary +sal_increase
+where job_id = 'ST_CLERK';
+v_rows_updated :=(SQL%ROWCOUNT||' row/s updated');
+DBMS_OUTPUT.PUT_LINE(v_rows_updated);
+END;
