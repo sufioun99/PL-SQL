@@ -1,0 +1,198 @@
+--Select Statments in PL/SQL
+============================
+SET serveroutput ON
+DECLARE
+   v_fname VARCHAR2(25);
+BEGIN
+   SELECT first_name INTO v_fname
+   FROM employees
+   WHERE employee_id=200;
+   DBMS_OUTPUT.PUT_LINE(' First Name is: '||v_fname);
+END;
+/
+--Retriving Data in PL/SQL
+---------------
+DECLARE
+    v_emp_hiredate employees.hire_date%type;
+    v_emp_salary employees.salary%TYPE;
+BEGIN
+    SELECT hire_date, salary
+    INTO v_emp_hiredate, v_emp_salary
+    FROM employees
+    WHERE employee_id = 100;
+    DBMS_OUTPUT.PUT_LINE('Hire date is: '||v_emp_hiredate);
+    DBMS_OUTPUT.PUT_LINE('Salary is: '||v_emp_salary);
+END;
+/
+DECLARE
+    v_sum_sal NUMBER(10,2);
+    v_deptno NUMBER NOT NULL:=60;
+BEGIN
+    SELECT SUM(salary)  --group function
+    INTO v_sum_sal FROM employees
+    WHERE department_id = v_deptno;
+    DBMS_OUTPUT.PUT_LINE('The sum of salary is: '||v_sum_saL);
+END;
+/
+
+DECLARE
+    v_sum_sal NUMBER(10,2);
+BEGIN
+    v_sum_sal:= SUM(employees.salary);  --group function
+    DBMS_OUTPUT.PUT_LINE('The sum of salary is: '||v_sum_saL);
+END;
+/
+
+--Naming Ambiguities
+====================
+DECLARE
+  hire_date employees.hire_date%TYPE;
+  sysdate hire_date%TYPE;
+  employee_id employees.employee_id%TYPE := 176;
+BEGIN
+  SELECT hire_date,
+    sysdate
+  INTO hire_date,
+    sysdate
+  FROM employees
+  WHERE employee_id = employee_id;
+END;
+/
+--Inserting Data
+================
+BEGIN
+ INSERT INTO employees
+    (employee_id, first_name, last_name, email,  hire_date, job_id, salary)
+ VALUES(employees_seq.NEXTVAL, 'Ruth', 'Cores',  'RCORES', sysdate, 'AD_ASST', 4000);
+END;
+/
+
+SELECT * FROM employees
+WHERE first_name='Ruth';
+
+--Updating Data
+===============
+DECLARE 
+    sal_increase employees.salary%TYPE:= 800;
+    v_rows_updated VARCHAR2(30);
+BEGIN
+    UPDATE employees
+    SET salary = salary + sal_increase
+    WHERE job_id = 'ST_CLERK';
+    v_rows_updated := (SQL%ROWCOUNT || ' row/s updated');
+    DBMS_OUTPUT.PUT_LINE(v_rows_updated);
+END;
+/
+rollback;
+
+--Deleting Data
+===============
+DECLARE
+  deptno employees.department_id%TYPE:=10;
+BEGIN
+  DELETE FROM employees
+  WHERE department_id= deptno;
+END;
+/
+
+DECLARE
+  empno employees.employee_id%TYPE:=174;
+  v_rows_deleted VARCHAR2(30);
+BEGIN
+  DELETE FROM employees WHERE employee_id= empno;
+  v_rows_deleted := (SQL%ROWCOUNT ||' row deleted.');
+  DBMS_OUTPUT.PUT_LINE (v_rows_deleted);
+END;
+/
+--Merging Rows
+==============
+drop table copy_emp purge;
+
+CREATE TABLE copy_emp
+AS (SELECT  employee_id, first_name, last_name, email, phone_number, hire_date, 
+	job_id, salary, commission_pct, manager_id, department_id
+    FROM employees 
+    WHERE department_id IN (20,50,70));
+
+SELECT count(*) FROM copy_emp;
+
+
+BEGIN
+  MERGE INTO copy_emp c
+    USING employees e
+    ON (e.employee_id = c.employee_id)
+  WHEN MATCHED THEN
+    UPDATE SET
+     c.first_name = e.first_name,
+     c.last_name = e.last_name,
+     c.email = e.email,
+     c.phone_number = e.phone_number,
+     c.hire_date = e.hire_date,
+     c.job_id = e.job_id,
+     c.salary = e.salary*2,
+     c.commission_pct = e.commission_pct,
+
+     c.manager_id = e.manager_id,
+     c.department_id = e.department_id
+  WHEN NOT MATCHED THEN
+    INSERT VALUES(e.employee_id, e.first_name, e.last_name, e.email, e.phone_number, 
+	e.hire_date, e.job_id, e.salary, e.commission_pct, e.manager_id, e.department_id);
+END;
+/
+
+--IMPLICIT CURSOR
+=================
+--SQL%FOUND
+CREATE TABLE dept_temp AS SELECT * FROM departments;
+
+SELECT * FROM dept_temp
+WHERE department_id=270;
+
+DECLARE
+  V_dept_no NUMBER(4) := 270;
+BEGIN
+    DELETE FROM dept_temp WHERE department_id = v_dept_no;
+  IF SQL%FOUND THEN -- delete succeeded
+    INSERT INTO dept_temp VALUES (270, 'Personnel', 200, 1700);
+  END IF;
+END;
+/
+
+SELECT * FROM dept_temp
+WHERE department_id=670;
+
+DECLARE
+  V_dept_no NUMBER(4) := 670;
+BEGIN
+    DELETE FROM dept_temp WHERE department_id = v_dept_no;
+  IF SQL%FOUND THEN -- delete succeeded
+    INSERT INTO dept_temp VALUES (670, 'Personnel', 200, 1700);
+  END IF;
+END;
+/
+
+--SQL%NOTFOUND
+SELECT * FROM dept_temp
+WHERE department_id=670;
+
+DECLARE
+  V_dept_no NUMBER(4) := 670;
+BEGIN
+    DELETE FROM dept_temp WHERE department_id = v_dept_no;
+  IF SQL%NOTFOUND THEN -- delete not succeeded
+    INSERT INTO dept_temp VALUES (670, 'Personnel', 200, 1700);
+  END IF;
+END;
+/
+
+--SQL%ROWCOUNT
+DECLARE
+   v_rows_deleted VARCHAR2(30);
+   v_empno copy_emp.employee_id%TYPE := 104;
+BEGIN
+   DELETE FROM copy_emp
+   WHERE employee_id = v_empno;
+   v_rows_deleted := (SQL%ROWCOUNT ||' row deleted.');
+   DBMS_OUTPUT.PUT_LINE (v_rows_deleted);
+END;
+/
