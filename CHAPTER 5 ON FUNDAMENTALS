@@ -1,3 +1,4 @@
+##### MERGING 
 BEGIN
 MERGE INTO COPY_EMP C
 USING EMPLOYEES E 
@@ -18,3 +19,15 @@ when not matched then
 insert values(e.employee_id,e.first_name,e.last_name,e.email,e.phone_number,e.hire_date,e.job_id,e.salary,e.commission_pct,e.manager_id, e.department_id);
 END;
 /
+
+###### EXAMPLES ON UPDATING ROWS
+Declare
+sal_increase employees.salary%type :=800;
+v_rows_updated varchar2(30);
+BEGIN
+UPDATE employees
+set salary = salary +sal_increase
+where job_id = 'ST_CLERK';
+v_rows_updated :=(SQL%ROWCOUNT||' row/s updated');
+DBMS_OUTPUT.PUT_LINE(v_rows_updated);
+END;
