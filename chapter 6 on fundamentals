@@ -1,0 +1,66 @@
+
+####
+declare
+ v_grade char(1) :=upper('&grade');
+ v_apprisal Varchar2(20);
+ begin
+ v_apprisal:=
+ CASE v_grade
+ WHEN 'A' THEN 'EXCELLENT'
+ WHEN 'B' THEN 'Very Good'
+ WHEN 'C' THEN 'GOOD'
+ ELSE 'NO SUCH GRADE'
+ end;
+ dbms_output.put_line('Grade '||v_grade||' Apprisal '||v_apprisal);
+ end;
+
+#####
+declare
+v_grade char(1) :=upper('&grade');
+v_apprisal Varchar2(20);
+begin
+v_apprisal:= CASE
+WHEN v_grade = 'A' THEN 'EXCELLENT'
+WHEN v_grade IN ('B','C') THEN 'GOOD'
+ELSE 'NO SUCH GRADE'
+end;
+dbms_output.put_line('Grade '||v_grade||' Apprisal '||v_apprisal);
+end;
+
+
+#####
+ declare
+ v_myage number :=&Provide_age;
+ begin
+ if v_myage < 11 then
+ dbms_output.put_line(' I am a child');
+ elsif v_myage < 20 then
+ dbms_output.put_line('I am young');
+ elsif v_myage < 30 then
+ dbms_output.put_line('I am in my twenties');
+ elsif v_myage < 40 then
+ dbms_output.put_line('I am in my thirties');
+ else
+ dbms_output.put_line('I am always young');
+ end if;
+ end;
+
+###### (HAVEN'T UNDERSTOOD YET)
+declare
+V_DEPTID NUMBER;
+V_DEPTNAME VARCHAR2(20);
+V_EMPS NUMBER;
+V_MNGID NUMBER := 108;
+BEGIN
+CASE V_MNGID
+WHEN 108 THEN
+SELECT DEPARTMENT_ID, DEPARTMENT_NAME
+INTO V_DEPTID, V_DEPTNAME FROM DEPARTMENTS
+WHERE MANAGER_ID = 108;
+SELECT COUNT(*) INTO V_EMPS FROM EMPLOYEES
+WHERE DEPARTMENT_ID = V_DEPTID;
+END CASE;
+dbms_output.put_line('YOU ARE WORKING IN THE '|| V_DEPTNAME||' DEPARTMENT. THERE ARE '||V_EMPS|| ' EMPLOYEES IN THIS DEPARTMENT');
+END;
+/
+######
