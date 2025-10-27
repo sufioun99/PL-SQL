@@ -116,12 +116,19 @@ ANS:
 SELECT * FROM MESSAGES;
 
 8.ANS:
-
-
-
-
-
-
+declare
+TYPE  t_rec IS RECORD
+(v_sal number(8),
+v_minsal number(8) default 1000,
+v_hire_date employees.hire_date%type,
+v_recl employees%rowtype;
+v_myrec t_rec;
+begin
+v_myrec.v_sal := v_myrec.v_minsal + 500 ;
+v_myrec.v_hire_date := sysdate;
+select * INTO v_
+end;
+/
 
 ######class practice 
 declare
