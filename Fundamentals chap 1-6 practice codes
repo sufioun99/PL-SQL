@@ -1,0 +1,141 @@
+1.a) 
+ANS:
+SET SERVEROUTPUT ON
+
+ BEGIN
+ DBMS_OUTPUT.PUT_LINE('Hello World');
+ END;
+ /
+
+b)
+ANS:
+ DECLARE
+ V_TODAY DATE:= SYSDATE;
+ V_TOMORROW V_TODAY%TYPE;
+ BEGIN
+ V_TOMORROW:= V_TODAY+1;
+ DBMS_OUTPUT.PUT_LINE('Hello World');
+  DBMS_OUTPUT.PUT_LINE('Today is:'||V_TODAY);
+ DBMS_OUTPUT.PUT_LINE('Tomorrow is:'||V_TOMORROW);
+ END;
+ /
+
+2.
+ declare
+ v_pf employees.salary%type;
+ v_sal employees.salary%type;
+ begin
+ select ((salary*0.45)*0.12), salary
+ INTO v_pf,v_sal
+ from employees
+ where employee_id = 100;
+ dbms_output.put_line('The contribution towards PF ' ||v_pf);
+ dbms_output.put_line('The salary ' ||v_sal);
+ end;
+/
+3. 
+ANS:
+DECLARE
+V_MAX_DEPTNO NUMBER;
+BEGIN
+SELECT MAX(DEPARTMENT_ID)
+INTO V_MAX_DEPTNO
+FROM DEPARTMENTS;
+DBMS_OUTPUT.PUT_LINE('THE MAXIMUM DEPARTMENT ID IS:' ||V_MAX_DEPTNO);
+END;
+/
+
+4.
+ANS:
+ DECLARE
+ V_HIREDATE EMPLOYEES.HIRE_DATE%TYPE;
+ V_SALARY EMPLOYEES.SALARY%TYPE;
+ BEGIN
+ SELECT HIRE_DATE, SALARY
+ INTO V_HIREDATE, V_SALARY
+ FROM EMPLOYEES
+ WHERE EMPLOYEE_ID = 100;
+ DBMS_OUTPUT.PUT_LINE('THE HIRE DATE IS:' ||V_HIREDATE);
+  DBMS_OUTPUT.PUT_LINE('THE SALARY IS:' || V_SALARY);
+ END;
+ /
+
+5.
+ANS:
+
+ DECLARE
+ V_DEPT_NAME DEPARTMENTS.DEPARTMENT_NAME%TYPE := 'Software';
+ V_DEPT_ID NUMBER;
+ V_MAX_DEPTNO NUMBER;
+ BEGIN
+ SELECT MAX(DEPARTMENT_ID)
+ INTO  V_MAX_DEPTNO
+ FROM DEPARTMENTS;
+ V_DEPT_ID := 10+ V_MAX_DEPTNO;
+ INSERT INTO DEPT11(DEPT_ID, DEPT_NAME, LOCATION_ID)
+ VALUES(V_DEPT_ID, V_DEPT_NAME, NULL);
+ DBMS_OUTPUT.PUT_LINE('SQL %ROWCOUNT GIVES'|| SQL%ROWCOUNT);
+ END;
+ /
+SELECT * FROM DEPT11;
+
+6.
+ANS:
+ DECLARE
+ V_DEPT_NAME VARCHAR2(30) :='Education';
+ V_DEPT_ID DEPARTMENTS.DEPARTMENT_ID%TYPE;
+ V_MAX_DEPTNO NUMBER;
+ BEGIN
+ SELECT MAX(DEPARTMENT_ID)
+ INTO V_MAX_DEPTNO
+ FROM DEPARTMENTS;
+ V_DEPT_ID := V_MAX_DEPTNO+10;
+ INSERT INTO DEPARTMENTS(DEPARTMENT_ID, DEPARTMENT_NAME, LOCATION_ID)
+ VALUES(V_DEPT_ID, V_DEPT_NAME, NULL);
+ DBMS_OUTPUT.PUT_LINE('SQL%ROWCOUNT GIVES'||SQL%ROWCOUNT);
+ END;
+ /
+
+SELECT * FROM DEPARTMENTS;
+
+7.
+ANS:
+ BEGIN
+ FOR i in 1..10 LOOP
+ IF i=6 OR i=8 THEN
+ NULL;
+ ELSE
+ INSERT INTO messages(results)
+ VALUES(i);
+ END IF;
+ END LOOP;
+ COMMIT;
+ END;
+ /
+
+SELECT * FROM MESSAGES;
+
+8.ANS:
+
+
+
+
+
+
+
+######class practice 
+declare
+TYPE  t_rec IS RECORD
+(v_sal number(8),
+v_minsal number(8) default 1000,
+v_hire_date employees.hire_date%type,
+v_recl employees%rowtype);
+v_myrec t_rec;
+begin
+v_myrec.v_sal := v_myrec.v_minsal + 500 ;
+v_myrec.v_hire_date := sysdate;
+select * INTO v_myrec.v_recl
+from employees where employee_id = 100;
+dbms_output.put_line(v_myrec.v_recl.last_name ||' '||to_char(v_myrec.v_hire_date)||' '||to_char(v_myrec.v_sal));
+end;
+/
