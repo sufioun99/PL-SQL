@@ -117,20 +117,35 @@ create table messages( Results Number(2));
 
 SELECT * FROM MESSAGES;
 
-8.ANS:
-declare
-TYPE  t_rec IS RECORD
-(v_sal number(8),
-v_minsal number(8) default 1000,
-v_hire_date employees.hire_date%type,
-v_recl employees%rowtype;
-v_myrec t_rec;
-begin
-v_myrec.v_sal := v_myrec.v_minsal + 500 ;
-v_myrec.v_hire_date := sysdate;
-select * INTO v_
-end;
+8. ANS:
+CREATE TABLE emp AS SELECT * FROM employees;
+
+DESC emp
+
+ALTER TABLE emp 
+ADD stars VARCHAR2(20);
+
+DESC emp
+
+DECLARE
+v_empno emp.employee_id%TYPE := 176;
+v_asterisk emp.stars%TYPE := NULL;
+v_sal emp.salary%TYPE;
+BEGIN
+SELECT NVL(ROUND(salary/1000), 0) INTO v_sal
+FROM emp WHERE employee_id = v_empno;
+FOR i IN 1..v_sal
+LOOP
+v_asterisk := v_asterisk ||'*';
+END LOOP;
+UPDATE emp SET stars = v_asterisk
+WHERE employee_id = v_empno;
+COMMIT;
+END;
 /
+
+SELECT employee_id, salary, stars
+FROM emp WHERE employee_id =176;
 
 ######class practice 
 declare
