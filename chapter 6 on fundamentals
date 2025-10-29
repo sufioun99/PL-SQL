@@ -148,7 +148,23 @@ END LOOP;
 END;
 /
 
-###################################
+###############PL/SQL FUNDAMENTALS(8-20 page)
+
+ declare
+ cursor c_emp_cursor IS
+ select employee_id, last_name FROM employees;
+ v_emp_record c_emp_cursor%rowtype;
+ BEGIN
+ IF NOT c_emp_cursor%ISOPEN THEN
+ OPEN c_emp_cursor;
+ END IF;
+ LOOP
+ FETCH c_emp_cursor INTO v_emp_record ;
+ EXIT when c_emp_cursor%ROWcount > 10 OR c_emp_cursor%notfound;
+ DBMS_output.put_line(v_emp_record.employee_id||' '||v_emp_record.last_name);
+ END LOOP;
+ CLOSE c_emp_cursor;
+ END;
 
 
 
