@@ -1,4 +1,4 @@
-
+chapter ---- 6
 ####
 declare
  v_grade char(1) :=upper('&grade');
@@ -64,5 +64,92 @@ dbms_output.put_line('YOU ARE WORKING IN THE '|| V_DEPTNAME||' DEPARTMENT. THERE
 END;
 /
 ######  LOOPS (BASIC/FOR/WHILE)
+
+
+chapter -- 7 ( composite data types )
+
+Chapter -- 8 ( Explicit cursor )
+#############
+
+declare
+cursor c_emp_cursor IS
+select employee_id,last_name FROM employees
+where department_id = 30;
+v_empno employees.employee_id%type;
+v_lname employees.last_name%type;
+BEGIN
+open c_emp_cursor;
+FETCH c_emp_cursor INTO v_empno, v_lname;
+DBMS_output.put_line(v_empno||' '||v_lname);
+END;
+/
+
+#####################
+declare
+cursor c_emp_cursor IS
+select employee_id,last_name FROM employees
+where department_id = 30;
+v_empno employees.employee_id%type;
+v_lname employees.last_name%type;
+BEGIN
+open c_emp_cursor;
+LOOP
+FETCH c_emp_cursor INTO v_empno, v_lname;
+EXIT WHEN c_emp_cursor%NOTFOUND;
+DBMS_output.put_line(v_empno||' '||v_lname);
+END LOOP;
+END;
+/
+#######################
+
+declare
+cursor c_emp_cursor IS
+select employee_id,last_name FROM employees
+where department_id = 30;
+v_empno employees.employee_id%type;
+v_lname employees.last_name%type;
+BEGIN
+open c_emp_cursor;
+LOOP
+FETCH c_emp_cursor INTO v_empno, v_lname;
+EXIT WHEN c_emp_cursor%NOTFOUND;
+DBMS_output.put_line(v_empno||' '||v_lname);
+END LOOP;
+END;
+/
+
+##################
+##############################
+declare
+cursor c_emp_cursor IS
+select employee_id,last_name FROM employees
+where department_id = 30;
+v_emp_record c_emp_cursor%ROWTYPE; --cursor based record
+BEGIN
+open c_emp_cursor;
+LOOP
+FETCH c_emp_cursor INTO v_emp_record;
+EXIT WHEN c_emp_cursor%NOTFOUND;
+DBMS_output.put_line(v_emp_record.employee_id||' '||v_emp_record.last_name);
+END LOOP;
+close c_emp_cursor;
+END;
+
+##################################
+declare
+cursor c_emp_cursor IS
+select employee_id, last_name FROM employees
+WHERE department_id = 30;
+BEGIN
+for emp_record IN c_emp_cursor
+LOOP
+DBMS_output.put_line(emp_record.employee_id||' '||emp_record.last_name);
+END LOOP;
+END;
+/
+
+###################################
+
+
 
 
