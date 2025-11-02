@@ -1,0 +1,466 @@
+--Fetching data(one row) from the cursor
+========================================
+SET SERVEROUTPUT ON
+
+DECLARE
+	CURSOR c_emp_cursor IS
+		SELECT employee_id, last_name FROM employees
+     		WHERE department_id=30;
+   	v_empno employees.employee_id%TYPE;
+   	v_lname employees.last_name%TYPE;
+BEGIN
+   	OPEN c_emp_cursor;
+   		FETCH c_emp_cursor INTO v_empno, v_lname;
+   	DBMS_OUTPUT.PUT_LINE(v_empno||' '||v_lname);
+END;
+/
+
+
+
+--Fetching data(all rows with loop) from the cursor
+===================================================
+
+DECLARE
+	CURSOR c_emp_cursor IS
+		SELECT employee_id, last_name
+		FROM employees
+		WHERE department_id= 30;
+	v_empno employees.employee_id%TYPE;
+	v_lname employees.last_name%TYPE;
+BEGIN
+	OPEN c_emp_cursor;
+		LOOP
+			FETCH c_emp_cursor INTO v_empno, v_lname;
+			EXIT WHEN c_emp_cursor%NOTFOUND;
+			DBMS_OUTPUT.PUT_LINE(v_empno||' '||v_lname);
+		END LOOP;
+END;
+/
+
+--Closing the cursor
+====================
+
+DECLARE
+	CURSOR c_emp_cursor IS
+		SELECT employee_id, last_name
+		FROM employees
+		WHERE department_id= 30;
+	v_empno employees.employee_id%TYPE;
+	v_lname employees.last_name%TYPE;
+BEGIN
+	OPEN c_emp_cursor;
+		LOOP
+			FETCH c_emp_cursor INTO v_empno, v_lname;
+			EXIT WHEN c_emp_cursor%NOTFOUND;
+			DBMS_OUTPUT.PUT_LINE(v_empno||' '||v_lname);
+		END LOOP;
+	CLOSE c_emp_cursor;
+END;
+/
+
+--Cursors and Records
+=====================
+
+DECLARE
+	CURSOR c_emp_cursor IS
+		SELECT employee_id, last_name FROM employees
+		WHERE department_id =30;
+	v_emp_record c_emp_cursor%ROWTYPE; --cursor based record
+BEGIN
+	OPEN c_emp_cursor;
+		LOOP
+		FETCH c_emp_cursor INTO v_emp_record;
+		EXIT WHEN c_emp_cursor%NOTFOUND;
+		DBMS_OUTPUT.PUT_LINE( v_emp_record.employee_id
+				||' '||v_emp_record.last_name);
+		END LOOP;
+	CLOSE c_emp_cursor;
+END;
+/
+
+--Cursor FOR LOOP
+=================
+
+DECLARE
+	CURSOR c_emp_cursor IS
+		SELECT employee_id, last_name FROM employees
+		WHERE department_id =30;
+BEGIN
+	FOR emp_record IN c_emp_cursor
+		LOOP
+			DBMS_OUTPUT.PUT_LINE( emp_record.employee_id
+					||' ' ||emp_record.last_name);
+		END LOOP;
+END;
+/
+
+
+--%ISOPEN Attribute
+===================
+
+DECLARE
+	CURSOR c_emp_cursor IS
+		SELECT employee_id, last_name FROM employees
+		WHERE department_id =30;
+	v_emp_record c_emp_cursor%ROWTYPE;
+BEGIN
+	IF NOT c_emp_cursor%ISOPEN THEN
+		OPEN c_emp_cursor;
+	END IF;
+		LOOP
+		FETCH c_emp_cursor INTO v_emp_record;
+		EXIT WHEN c_emp_cursor%NOTFOUND;
+		DBMS_OUTPUT.PUT_LINE( v_emp_record.employee_id
+				||' '||v_emp_record.last_name);
+		END LOOP;
+	CLOSE c_emp_cursor;
+END;
+/
+
+
+--%ROWCOUNT and %NOTFOUND
+=========================
+DECLARE
+	CURSOR c_emp_cursor IS 
+		SELECT employee_id, last_name 
+		FROM employees
+		ORDER BY employee_id;
+	v_emp_record c_emp_cursor%ROWTYPE;
+BEGIN
+	OPEN c_emp_cursor;
+		LOOP
+			FETCH c_emp_cursor INTO v_emp_record;
+			EXIT WHEN c_emp_cursor%NOTFOUND;
+			DBMS_OUTPUT.PUT_LINE( v_emp_record.employee_id
+					||' '||v_emp_record.last_name);
+		END LOOP;
+	CLOSE c_emp_cursor;
+END ; 
+/
+
+DECLARE
+	CURSOR c_emp_cursor IS 
+		SELECT employee_id, last_name 
+		FROM employees
+		ORDER BY employee_id;
+	v_emp_record c_emp_cursor%ROWTYPE;
+BEGIN
+	OPEN c_emp_cursor;
+		LOOP
+			FETCH c_emp_cursor INTO v_emp_record;
+			EXIT WHEN c_emp_cursor%ROWCOUNT > 10;
+			DBMS_OUTPUT.PUT_LINE( v_emp_record.employee_id
+					||' '||v_emp_record.last_name);
+		END LOOP;
+	CLOSE c_emp_cursor;
+END ; 
+/
+
+
+--Cursor FOR LOOPS Using subqueries
+===================================
+
+BEGIN
+	FOR emp_record IN (SELECT employee_id, last_name
+			FROM employees WHERE department_id =30)
+	LOOP
+		DBMS_OUTPUT.PUT_LINE( emp_record.employee_id
+				||' '||emp_record.last_name);
+	END LOOP;
+END;
+/
+
+--Cursors with Parameters
+=========================
+DECLARE
+	CURSOR c_emp_cursor IS
+		SELECT employee_id, last_name
+		FROM employees
+		WHERE department_id = 30;
+BEGIN
+	FOR emp_record IN c_emp_cursor
+		LOOP
+			DBMS_OUTPUT.PUT_LINE( emp_record.employee_id
+					||' ' ||emp_record.last_name);
+		END LOOP;
+END;
+/
+
+DECLARE
+	CURSOR c_emp_cursor IS
+		SELECT employee_id, last_name, department_id
+		FROM employees
+		WHERE department_id = 30;
+	CURSOR c_emp_cursor1 IS
+		SELECT employee_id, last_name, department_id
+		FROM employees
+		WHERE department_id = 40;
+	CURSOR c_emp_cursor2 IS
+		SELECT employee_id, last_name, department_id
+		FROM employees
+		WHERE department_id = 50;
+BEGIN
+	FOR emp_record IN c_emp_cursor
+		LOOP
+			DBMS_OUTPUT.PUT_LINE( emp_record.employee_id
+					||' ' ||emp_record.last_name||' ' ||emp_record.department_id);
+		END LOOP;
+	FOR emp_record1 IN c_emp_cursor1
+		LOOP
+			DBMS_OUTPUT.PUT_LINE( emp_record1.employee_id
+					||' ' ||emp_record1.last_name||' ' ||emp_record1.department_id);
+		END LOOP;
+	FOR emp_record2 IN c_emp_cursor2
+		LOOP
+			DBMS_OUTPUT.PUT_LINE( emp_record2.employee_id
+					||' ' ||emp_record2.last_name||' ' ||emp_record2.department_id);
+		END LOOP;
+END;
+/
+
+
+DECLARE
+	CURSOR c_emp_cursor (deptno NUMBER) IS
+		SELECT employee_id, last_name, department_id, job_id
+		FROM employees
+		WHERE department_id = deptno;
+BEGIN
+	FOR emp_record IN c_emp_cursor(10)
+		LOOP
+			DBMS_OUTPUT.PUT_LINE( emp_record.employee_id
+					||' ' ||emp_record.last_name||' ' ||emp_record.department_id||' ' ||emp_record.job_id);
+		END LOOP;
+	FOR emp_record IN c_emp_cursor(30)
+		LOOP
+			DBMS_OUTPUT.PUT_LINE( emp_record.employee_id
+					||' ' ||emp_record.last_name||' ' ||emp_record.department_id||' ' ||emp_record.job_id);
+		END LOOP;
+	FOR emp_record IN c_emp_cursor(50)
+		LOOP
+			DBMS_OUTPUT.PUT_LINE( emp_record.employee_id
+					||' ' ||emp_record.last_name||' ' ||emp_record.department_id||' ' ||emp_record.job_id);
+		END LOOP;
+END;
+/
+
+DECLARE
+   CURSOR c_emp_cursor (p_deptno NUMBER, p_job VARCHAR2) IS
+           SELECT employee_id, last_name, department_id, job_id
+           FROM employees
+           WHERE department_id = p_deptno
+	   AND job_id = p_job;
+BEGIN
+   FOR emp_record IN c_emp_cursor(50, 'ST_MAN')
+             LOOP
+                     DBMS_OUTPUT.PUT_LINE( emp_record.employee_id
+                                     ||' ' ||emp_record.last_name||' ' ||emp_record.department_id||' ' ||emp_record.job_id);
+             END LOOP;
+END;
+/
+
+DECLARE
+	CURSOR c_dept IS
+		SELECT distinct department_id
+		FROM employees
+		ORDER BY department_id;
+   
+	CURSOR c_emp_cursor (p_deptno NUMBER) IS
+                SELECT employee_id, last_name, salary
+                FROM employees
+                WHERE department_id = p_deptno;
+BEGIN
+  DBMS_OUTPUT.PUT_LINE( '   =:Employee List:=');
+	FOR dept_record IN c_dept
+                LOOP
+                	DBMS_OUTPUT.PUT_LINE( 'Department No: '||dept_record.department_id);
+                		
+			FOR emp_record IN c_emp_cursor(dept_record.department_id)
+                		LOOP
+                     			DBMS_OUTPUT.PUT_LINE( '    '||emp_record.employee_id||' ' ||emp_record.last_name||' ' ||emp_record.salary);
+                		END LOOP;
+		END LOOP;
+END;
+/
+
+
+--FOR UPDATE(Locking to deny access) and WHERE CURRENT OF(to reference the current row from an explicit cursor)
+===============================================================================================================
+# Generally when we are using update, delete statements automatically locks are generated in the database
+# If you want to generate locks before update, delete statements then we are using cursor locking mechanism in database systems
+# In this case we must spesify FOR UPDATE clause in cursor definition
+# We are opening the cursor then only oracle server internally uses exclusive locks
+# After processing we must release the locks using COMMIT statement
+
+
+# WHERE CURRENT OF clause uniquely identify a record in each process because WHERE CURRENT OF clause internally uses ROWID
+# Whenever we are using WHERE CURRENT OF clause we must use FOR UPDATE clause
+
+
+SET serveroutput ON
+
+DROP TABLE test_emp PURGE;
+
+CREATE TABLE test_emp AS SELECT employee_id, job_id, salary FROM employees WHERE employee_id<114;
+
+SELECT * FROM test_emp;
+
+DECLARE
+	CURSOR c1 IS
+		SELECT employee_id, job_id, salary
+		FROM test_emp;
+	emp_record test_emp%ROWTYPE;
+BEGIN
+	OPEN c1;
+		LOOP
+		    FETCH c1 INTO emp_record;	-- fails on second iteration
+			IF emp_record.job_id = 'FI_ACCOUNT' THEN
+				UPDATE test_emp
+				SET salary = emp_record.salary +1000;
+			END IF;
+		    EXIT WHEN c1%NOTFOUND;
+		END LOOP;
+END;
+/
+
+DECLARE
+	CURSOR c1 IS
+		SELECT employee_id, job_id, salary
+		FROM test_emp;
+	emp_record test_emp%ROWTYPE;
+BEGIN
+	OPEN c1;
+		LOOP
+		    FETCH c1 INTO emp_record;	-- fails on second iteration
+			IF emp_record.job_id = 'IT_PROG' THEN
+				UPDATE test_emp
+				SET salary = emp_record.salary +1000;
+			END IF;
+		    EXIT WHEN c1%NOTFOUND;
+		END LOOP;
+END;
+/
+
+DECLARE
+	CURSOR c1 IS
+		SELECT employee_id, job_id, salary
+		FROM test_emp;
+	emp_record test_emp%ROWTYPE;
+BEGIN
+	OPEN c1;
+		LOOP
+		    FETCH c1 INTO emp_record;
+			IF emp_record.job_id = 'IT_PROG' THEN
+				UPDATE test_emp
+				SET salary = emp_record.salary +1000 
+        WHERE employee_id=emp_record.employee_id; --where clase satisfy the job id and update automatically with particular condition
+			END IF;
+		    EXIT WHEN c1%NOTFOUND;
+		END LOOP;
+END;
+/
+
+DECLARE
+	CURSOR c1 IS
+		SELECT employee_id, job_id, salary
+		FROM test_emp FOR UPDATE;
+	emp_record test_emp%ROWTYPE;
+BEGIN
+	OPEN c1;
+		LOOP
+		    FETCH c1 INTO emp_record;
+			IF emp_record.job_id = 'IT_PROG' THEN
+				UPDATE test_emp
+				SET salary = emp_record.salary +1000 
+        WHERE CURRENT OF c1; --You can use WHERE CURRENT OF clase with FOR UPDATE clause instead of WHERE clause for satisfy the particular condition
+			END IF;
+		    EXIT WHEN c1%NOTFOUND;
+		END LOOP;
+END;
+/
+
+DECLARE
+	CURSOR c1 IS
+		SELECT employee_id, job_id, salary
+		FROM test_emp FOR UPDATE; --create cursor with FOR UPDATE clause for Locking to deny access
+	emp_record test_emp%ROWTYPE;
+BEGIN
+	OPEN c1; --open your cursor for Lock the rows before the update or delete
+		/*LOOP
+		    FETCH c1 INTO emp_record;
+			IF emp_record.job_id = 'IT_PROG' THEN
+				UPDATE test_emp
+				SET salary = emp_record.salary +1000 
+        WHERE CURRENT OF c1; --You can use WHERE CURRENT OF clase with FOR UPDATE clause instead of WHERE clause for satisfy the particular condition
+			END IF;
+		    EXIT WHEN c1%NOTFOUND;
+		END LOOP;*/
+END;
+/
+
+
+
+**update test_emp set salary=salary+100;  --Execute the statement at another session
+
+--More than one tables
+DECLARE
+   CURSOR c1 IS
+     SELECT last_name, job_id, salary, department_name
+        FROM employees, departments
+        WHERE employees.department_id = departments.department_id
+        AND job_id = 'SA_MAN'
+        FOR UPDATE OF salary;
+   emp_record c1%ROWTYPE;
+BEGIN
+   /*OPEN c1;
+           LOOP
+               FETCH c1 INTO emp_record;   -- fails on second iteration
+                   IF emp_record.job_id = 'SA_REP' THEN
+                           UPDATE employees
+                            SET salary = emp_record.salary +1000;
+                    END IF;
+                EXIT WHEN c1%NOTFOUND;
+            END LOOP;*/
+NULL;
+END;
+/
+
+--Lock the rows before the update or delete
+DECLARE
+	CURSOR c1 IS
+		SELECT employee_id, job_id, salary
+		FROM test_emp FOR UPDATE; --create cursor with FOR UPDATE clause for Locking to deny access
+	emp_record test_emp%ROWTYPE;
+BEGIN
+	OPEN c1; --open your cursor for Lock the rows before the update or delete
+		/*LOOP
+		    FETCH c1 INTO emp_record;
+			IF emp_record.job_id = 'IT_PROG' THEN
+				UPDATE test_emp
+				SET salary = emp_record.salary +1000 
+        WHERE CURRENT OF c1; --You can use WHERE CURRENT OF clase with FOR UPDATE clause instead of WHERE clause for satisfy the particular condition
+			END IF;
+		    EXIT WHEN c1%NOTFOUND;
+		END LOOP;*/
+END;
+/
+
+--Release the lock
+DECLARE
+	CURSOR c1 IS
+		SELECT employee_id, job_id, salary
+		FROM test_emp FOR UPDATE; --create cursor with FOR UPDATE clause for Locking to deny access
+	emp_record test_emp%ROWTYPE;
+BEGIN
+	OPEN c1; --reopen
+		/*LOOP
+		    FETCH c1 INTO emp_record;
+			IF emp_record.job_id = 'IT_PROG' THEN
+				UPDATE test_emp
+				SET salary = emp_record.salary +1000 
+        WHERE CURRENT OF c1; --You can use WHERE CURRENT OF clase with FOR UPDATE clause instead of WHERE clause for satisfy the particular condition
+			END IF;
+		    EXIT WHEN c1%NOTFOUND;
+		END LOOP;*/
+    COMMIT; --release the lock
+END;
+/
