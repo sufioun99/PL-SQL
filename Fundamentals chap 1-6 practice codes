@@ -163,3 +163,52 @@ from employees where employee_id = 100;
 dbms_output.put_line(v_myrec.v_recl.last_name ||' '||to_char(v_myrec.v_hire_date)||' '||to_char(v_myrec.v_sal));
 end;
 /
+################ TOP N SALARIES ( experimentals code)
+Declare
+v_top_n_sal number := &TOP_N;
+v_empno employees.employee_id%type;
+v_fname employees.first_name%type;
+v_lname employees.last_name%type;
+v_sal employees.salary%type;
+CURSOR c_top_salaries IS 
+SELECT employee_id, first_name, last_name, salary
+from employees
+ORDER BY salary desc  nulls last;
+BEGIN
+DBMS_OUTPUT.PUT_LINE('---TOP '||v_top_n_sal||' Employee Salaries---');
+OPEN c_top_salaries;
+FOR i IN 1..v_top_n_sal
+LOOP
+FETCH c_top_salaries INTO v_empno,v_fname,v_lname,v_sal;
+EXIT WHEN c_top_salaries%NOTFOUND;
+DBMS_OUTPUT.PUT_LINE(' Employee ID : '|| v_empno|| ', Name: '|| v_fname ||' '|| v_lname || ', salary: ' ||v_sal);
+END LOOP;
+CLOSE c_top_salaries;
+ DBMS_OUTPUT.PUT_LINE('--------------------------------------');
+END;
+/
+####################### (BOOK SOLUTION)
+create table top_salaries(salary number(7));
+
+declare
+v_num NUMBER(3)  := 5;
+v_sal employees.salary%type;
+CURSOR c_emp_cursor IS
+select salary
+from employees
+order by salary desc nulls last;
+begin
+open  c_emp_cursor;
+fetch  c_emp_cursor into v_sal;
+while c_emp_cursor%ROWCOUNT <= v_num AND c_emp_cursor%found LOOP
+insert into top_salaries(salary)
+values(v_sal);
+fetch c_emp_cursor into v_sal;
+end loop;
+close c_emp_cursor;
+end;
+/
+
+select * from  top_salaries;
+
+################
