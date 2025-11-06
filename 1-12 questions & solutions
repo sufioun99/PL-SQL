@@ -59,41 +59,41 @@ INTO p_sal, p_job
 FROM employees
 WHERE employee_id = p_empid;
 END get_employee;
+/
 -----------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-varibable v_salary number 
-variable v_sal varchar2(15)
-execute get_employee(120, :v_salary,:v_job)
-print v_salary v_job
-execute get_employee(300, :v_salary,:v_job)
+variable v_sal number 
+variable v_job varchar2(15)
+execute get_employee(120, :v_sal,:v_job)
+print v_sal v_job
+execute get_employee(300, :v_sal,:v_job)
 print v_salary v_job
 
 -----------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 5) Create a procedure called RAISE_SALARY to increase the employee salary.
 
 CREATE OR REPLACE PROCEDURE raise_salary
-(p_id IN employees.employee_id%TYPE, p_percent IN NUMBER)
-IS
-BEGIN
+(p_id IN employees.employee_id%TYPE, p_percent IN NUMBER) IS 
+BEGIN 
 UPDATE employees
 SET salary = salary * (1 + p_percent/100)
 WHERE employee_id = p_id;
 END raise_salary;
 /
+select last_name, salary from employees where employee_id = 176;
 EXECUTE raise_salary(176, 10);
+select last_name, salary from employees where employee_id = 176;
 
 -----------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 6) Create a procedure called QUERY_EMP to query the employee last_name and salary from the EMPLOYEES table.
 
- CREATE OR REPLACE PROCEDURE query_emp
- (p_id IN employees.employee_id%TYPE,
- p_name OUT employees.last_name%TYPE,
- p_salary OUT employees.salary%TYPE) IS
- BEGIN
- SELECT last_name, salary INTO p_name, p_salary
- FROM employees
- WHERE employee_id = p_id;
- END query_emp;
- /
+ CREATE OR REPLACE PROCEDURE 
+query_emp (p_id IN employees.employee_id%TYPE, p_name OUT employees.last_name%TYPE, p_salary OUT employees.salary%TYPE) IS 
+BEGIN SELECT last_name, salary INTO p_name, p_salary 
+FROM employees 
+WHERE employee_id = p_id; 
+END query_emp; 
+/
+
 ------------------------------used to check if the procedure is working or not ----------------------
 DECLARE
 v_emp_name employees.last_name%TYPE;
@@ -120,7 +120,7 @@ DBMS_OUTPUT.PUT_LINE('Err: adding dept: '|| p_name);
 END;
 /
 -----------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-CREATE PROCEDURE create_departments IS
+CREATE OR REPLACE PROCEDURE create_departments IS
 BEGIN
 add_department('Media', 100, 1800);
 add_department('Editing', 99, 1800);
