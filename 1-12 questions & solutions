@@ -1,4 +1,4 @@
-
+-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 1. Create,compile and invoke the ADD_JOB procedure and review the results.
 
 CREATE OR REPLACE PROCEDURE add_jobs( p_jobid jobs.job_id%type, p_jobtitle jobs.job_title%type) IS 
@@ -8,10 +8,11 @@ BEGIN
   COMMIT;
 END add_job;
 /
+-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 EXCUTE add_job ('IT_DBA', 'Database Administrator')
 SELECT * FROM jobs WHERE job_id = 'IT_DBA';
 EXCUTE add_job ( 'ST_MAN' , Stock Manager')
-
+-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 2) Create a procedure called UPD_JOB to modify a job in the JOBS table.
 
 CREATE OR REPLACE PROCEDURE upd_job( p_jobid IN jobs.job_id%type, p_jobtitle IN jobs.job_title%type) IS
@@ -24,13 +25,13 @@ BEGIN
 END IF;
 END upd_job;
 /
-
+-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 EXECUTE upd_job ('IT_DBA', 'Data Administration')
 SELECT * FROM jobs WHERE job_id = 'IT_DBA';
 EXECUTE upd_job ('IT_WEB', 'Web Master')
 SELECT * FROM jobs WHERE job_id = 'IT_WEB';
 
-
+-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 3) Create a procedure called DEL_JOB to delete a job from the JOBS table.
 
 CREATE OR REPLACE PROCEDURE del_job (p_jobid jobs.job_id%type) IS 
@@ -45,7 +46,7 @@ END del_job;
 EXECUTE del_job ('IT_DBA')
 SELECT * FROM jobs WHERE job_id = 'IT_DBA';
 EXECUTE del_job ('IT_WEB')
-
+-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 4) Create a procedure called GET_EMPLOYEE to query the EMPLOYEES table.
 
@@ -57,7 +58,7 @@ INTO p_sal, p_job
 FROM employees
 WHERE employee_id = p_empid;
 END get_employee;
-
+-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 varibable v_salary number 
 variable v_sal varchar2(15)
 execute get_employee(120, :v_salary,:v_job)
@@ -65,20 +66,85 @@ print v_salary v_job
 execute get_employee(300, :v_salary,:v_job)
 print v_salary v_job
 
+-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 5) Create a procedure called RAISE_SALARY to increase the employee salary.
 
+CREATE OR REPLACE PROCEDURE raise_salary
+(p_id IN employees.employee_id%TYPE, p_percent IN NUMBER)
+IS
+BEGIN
+UPDATE employees
+SET salary = salary * (1 + p_percent/100)
+WHERE employee_id = p_id;
+END raise_salary;
+/
+EXECUTE raise_salary(176, 10);
 
+-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 6) Create a procedure called QUERY_EMP to query the employee last_name and salary from the EMPLOYEES table.
 
+ CREATE OR REPLACE PROCEDURE query_emp
+ (p_id IN employees.employee_id%TYPE,
+ p_name OUT employees.last_name%TYPE,
+ p_salary OUT employees.salary%TYPE) IS
+ BEGIN
+ SELECT last_name, salary INTO p_name, p_salary
+ FROM employees
+ WHERE employee_id = p_id;
+ END query_emp;
+ /
+------------------------------used to check if the procedure is working or not ----------------------
+DECLARE
+v_emp_name employees.last_name%TYPE;
+v_emp_sal employees.salary%TYPE;
+BEGIN
+query_emp(171, v_emp_name, v_emp_sal);
+DBMS_OUTPUT.PUT_LINE(v_emp_name||' earns '||
+to_char(v_emp_sal, '$999,999.00'));
+END;
+/
+
+-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 7) Create a procedure called ADD_DEPT for adding new department into DEPARTMENTS table.
+
+CREATE OR REPLACE  PROCEDURE 
+add_department(p_name VARCHAR2, p_mgr NUMBER, p_loc NUMBER) IS
+BEGIN
+INSERT INTO DEPARTMENTS (department_id,department_name, manager_id, location_id)
+VALUES (DEPARTMENTS_SEQ.NEXTVAL, p_name, p_mgr, p_loc);
+DBMS_OUTPUT.PUT_LINE('Added Dept: '|| p_name);
+EXCEPTION
+WHEN OTHERS THEN
+DBMS_OUTPUT.PUT_LINE('Err: adding dept: '|| p_name);
+END;
+/
+-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+CREATE PROCEDURE create_departments IS
+BEGIN
+add_department('Media', 100, 1800);
+add_department('Editing', 99, 1800);
+add_department('Advertising', 101, 1800);
+END;
+/
+-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 8) Create and invoke the GET_SAL function with a single input parameter and to returns the salary of inputted employee.
 
+
+-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
 9) Create and invoke the TAX function with a single input parameter and to returns the income tax based on simple flat tax rate for inputted salary.
+
+-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 10) Create and invoke the GET_JOB function to return a job title.
 
+-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
 11 ) Create function called GET_ANNUAL_COMP to return the annual salary computed from employee’s monthly salary and commission passed as parameters.
+
+-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 12) Create a procedure ADD_EMPLOYEE to insert a new employee into the EMPLOYEES table. The procedure should call a VALID_DEPTID function to check whether the department_id for the new employee exists in the DEPARTMENTS table.
 
+-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------
