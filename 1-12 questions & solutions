@@ -14,3 +14,24 @@ EXCUTE add_job ( 'ST_MAN' ,; Stock Manager')
 
 2) Create a procedure called UPD_JOB to modify a job in the JOBS table.
 
+
+3) Create a procedure called DEL_JOB to delete a job from the JOBS table.
+
+4) Create a procedure called GET_EMPLOYEE to query the EMPLOYEES table.
+
+5) Create a procedure called RAISE_SALARY to increase the employee salary.
+
+6) Create a procedure called QUERY_EMP to query the employee last_name and salary from the EMPLOYEES table.
+
+7) Create a procedure called ADD_DEPT for adding new department into DEPARTMENTS table.
+
+8) Create and invoke the GET_SAL function with a single input parameter and to returns the salary of inputted employee.
+
+9) Create and invoke the TAX function with a single input parameter and to returns the income tax based on simple flat tax rate for inputted salary.
+
+10) Create and invoke the GET_JOB function to return a job title.
+
+11 ) Create function called GET_ANNUAL_COMP to return the annual salary computed from employee’s monthly salary and commission passed as parameters.
+
+12) Create a procedure ADD_EMPLOYEE to insert a new employee into the EMPLOYEES table. The procedure should call a VALID_DEPTID function to check whether the department_id for the new employee exists in the DEPARTMENTS table.
+
