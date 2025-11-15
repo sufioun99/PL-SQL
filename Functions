@@ -1,0 +1,76 @@
+8. Create and invoke the get_sal function with a single input parameter to return the salary of the inputted employee.
+
+```sql
+CREATE OR REPLACE FUNCTION get_sal
+(p_id employees.employee_id%TYPE) RETURN NUMBER IS
+v_sal employees.salary%TYPE := 0;
+BEGIN
+SELECT salary
+INTO v_sal
+FROM employees
+WHERE employee_id = p_id;
+RETURN v_sal;
+END get_sal;
+/
+```
+
+```sql
+EXEC DBMS_OUTPUT.PUT_LINE(get_sal(100))
+```
+
+9. Create and invoke the TAX function with a single input parameter to return the income tax based simple flat tax rate for the inputted salary.
+
+```sql
+CREATE OR REPLACE FUNCTION tax(p_value IN NUMBER)
+RETURN NUMBER IS
+BEGIN
+RETURN (p_value * 0.08);
+END tax;
+/
+SELECT employee_id, last_name, salary, tax(salary)
+FROM employees
+WHERE department_id = 100;
+```
+
+10. Create and invoke the GET_JOB function to return a job title.
+
+```sql
+CREATE OR REPLACE FUNCTION get_job
+(p_jobid IN jobs.job_id%TYPE)
+RETURN
+jobs.job_title%TYPE
+IS
+v_jobtitle jobs.job_title%TYPE;
+BEGIN
+SELECT job_title
+INTO v_jobtitle
+FROM jobs
+WHERE job_id = p_jobid;
+RETURN v_jobtitle;
+END get_job;
+/
+EXEC DBMS_OUTPUT.PUT_LINE(get_job('ST_MAN'));
+```
+
+11. Create a function called GET_ANNUAL_COMP to return the annual salary computed from the employee’s monthly salary and commission passed as parameters.
+
+```sql
+create or replace function get_annual_comp
+(p_sal IN employees.salary%type,
+p_comm IN employees.commission_pct%type)
+return number 
+IS
+begin
+return(nvl(p_sal,0) * 12 + (nvl(p_comm,0) * 12));
+end;
+/
+```
+
+```sql
+select employee_id, last_name, 
+get_annual_comp(salary, commission_pct) "Annual Compensation"
+from employees
+where department_id=30;
+```
+
+12) Create a procedure ADD_EMPLOYEE to insert a new employee into the EMPLOYEES table. The procedure should call a VALID_DEPTID function to check whether the department_id for the new employee exists in the DEPARTMENTS table.
