@@ -1,36 +1,6 @@
 1. Create,compile and invoke the ADD_JOB procedure and review the results.
------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-CREATE OR REPLACE PROCEDURE 
-add_jobs( p_jobid  jobs.job_id%type, p_jobtitle  jobs.job_title%type) IS
-BEGIN
-  INSERT INTO  jobs (job_id,job_title)
-  VALUES (p_jobid, p_jobtitle);
-  COMMIT;
-END add_jobs;
-/
------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-EXECUTE add_job ('IT_DBA', 'Database Administrator')
-SELECT * FROM jobs WHERE job_id = 'IT_DBA';
-EXECUTE add_job ( 'ST_MAN' , Stock Manager')
------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
 2) Create a procedure called UPD_JOB to modify a job in the JOBS table.
------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-CREATE OR REPLACE PROCEDURE upd_job( p_jobid IN jobs.job_id%type, p_jobtitle IN jobs.job_title%type) IS
-BEGIN 
-  UPDATE jobs 
-  SET job_title = p_jobtitle
-  WHERE job_id = p_jobid;
-  IF SQL%NOTFOUND THEN 
-    RAISE_APPLICATION_ERROR(-20202,'No job updated.');
-END IF;
-END upd_job;
-/
------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-EXECUTE upd_job ('IT_DBA', 'Data Administration')
-SELECT * FROM jobs WHERE job_id = 'IT_DBA';
-EXECUTE upd_job ('IT_WEB', 'Web Master')
-SELECT * FROM jobs WHERE job_id = 'IT_WEB';
------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 3) Create a procedure called DEL_JOB to delete a job from the JOBS table.
 
@@ -43,7 +13,6 @@ SELECT * FROM jobs WHERE job_id = 'IT_WEB';
 7) Create a procedure called ADD_DEPT for adding new department into DEPARTMENTS table.
 
 8. Create and invoke the get_sal function with a single input parameter to return the salary of the inputted employee.
-
 
 9. Create and invoke the TAX function with a single input parameter to return the income tax based simple flat tax rate for the inputted salary.
 
