@@ -1,5 +1,5 @@
 ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-1. Create,compile and invoke the ADD_JOB procedure and review the results.
+1. Create compile and invoke the ADD_JOB procedure and review the results.
 
 CREATE OR REPLACE PROCEDURE 
 add_jobs( p_jobid  jobs.job_id%type, p_jobtitle  jobs.job_title%type) IS
