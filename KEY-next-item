@@ -1,0 +1,57 @@
+/*DECLARE
+   l_supplier_id  product_order_master.supplier_id%TYPE;
+BEGIN
+   -- 1) Get supplier from selected Order
+   SELECT supplier_id
+     INTO l_supplier_id
+     FROM product_order_master
+    WHERE order_id = :PRODUCT_RECEIVE_MASTER.ORDER_ID;
+
+   :PRODUCT_RECEIVE_MASTER.SUPPLIER_ID := l_supplier_id;
+
+   -- (Optional) also set receive_date default if you want
+   IF :PRODUCT_RECEIVE_MASTER.RECEIVE_DATE IS NULL THEN
+      :PRODUCT_RECEIVE_MASTER.RECEIVE_DATE := SYSDATE;
+   END IF;
+
+   -- 2) Populate detail lines from order details
+   GO_BLOCK('PRODUCT_RECEIVE_DETAILS');
+   CLEAR_BLOCK(NO_VALIDATE);
+
+   FOR rec IN (
+      SELECT d.product_id,
+             d.mrp,
+             d.purchase_price,
+             d.quantity
+        FROM product_order_detail d
+       WHERE d.order_id = :PRODUCT_RECEIVE_MASTER.ORDER_ID
+       ORDER BY d.line_no
+   ) LOOP
+      CREATE_RECORD;
+
+      :PRODUCT_RECEIVE_DETAILS.LINE_NO          := :SYSTEM.CURSOR_RECORD; -- sequential line
+      :PRODUCT_RECEIVE_DETAILS.PRODUCT_ID       := rec.product_id;
+      :PRODUCT_RECEIVE_DETAILS.MRP              := rec.mrp;
+      :PRODUCT_RECEIVE_DETAILS.PURCHASE_PRICE   := rec.purchase_price;
+      :PRODUCT_RECEIVE_DETAILS.RECEIVE_QUANTITY := rec.quantity; -- you can set 0 if you want user to input
+   END LOOP;
+
+   -- Go to next item as usual
+   NEXT_ITEM;
+
+EXCEPTION
+   WHEN NO_DATA_FOUND THEN
+      MESSAGE('Invalid ORDER_ID: no matching order found.');
+      :PRODUCT_RECEIVE_MASTER.SUPPLIER_ID := NULL;
+
+      -- optional: clear details too
+      GO_BLOCK('PRODUCT_RECEIVE_DETAILS');
+      CLEAR_BLOCK(NO_VALIDATE);
+      GO_BLOCK('PRODUCT_RECEIVE_MASTER');
+
+   WHEN OTHERS THEN
+      MESSAGE('Error: ' || SQLERRM);
+      RAISE;
+END;
+*/
+null;
