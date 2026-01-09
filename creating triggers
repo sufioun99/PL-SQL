@@ -1,6 +1,0 @@
-Create and test the trigger for prevent the delete data from employees table.
-create and test the trigger for restrict employees salary who's earning not less than 2000.
-create and test the trigger for tracking user activity against the employee's salary.
-create and test the trigger for monitor user access in database.
-create a trigger called RESRICT_salary in order to prevent the triggering operation from succeeding if certain conditionis violated. Condition includes allowing certain employees to be able to earn a salary of more than 20,000.
-create a trigger based on employees table. if employees salary modify with less than the previous salary then trigger fire and raise error. trigger also returns a message that "you cannot change salary less than the privious salary."
