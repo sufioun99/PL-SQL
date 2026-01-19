@@ -1,0 +1,28 @@
+-- NEW-FORMS-INSTANCE trigger
+DECLARE
+    v_invoice_date DATE;
+    v_months_diff  NUMBER;
+BEGIN
+    -- Fetch the invoice date
+    SELECT invoice_date 
+    INTO v_invoice_date
+    FROM sales_master
+    WHERE invoice_id = :service_master.invoice_id;
+    
+    -- Calculate months difference
+    v_months_diff := MONTHS_BETWEEN(SYSDATE, v_invoice_date);
+    
+    -- Check if warranty is applicable (within 12 months of invoice)
+    IF v_months_diff <= 12 THEN
+        : service_master.warranty_applicable := 'Y';
+    ELSE
+        :service_master.warranty_applicable := 'N';
+    END IF;
+    
+EXCEPTION
+    WHEN NO_DATA_FOUND THEN
+        : service_master.warranty_applicable := 'N';
+    WHEN OTHERS THEN
+        MESSAGE('Error determining warranty:  ' || SQLERRM);
+        RAISE FORM_TRIGGER_FAILURE;
+END;
