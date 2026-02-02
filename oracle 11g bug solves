@@ -1,0 +1,4 @@
+For Environment setup, need to find default.env from oracle middleware folder.
+if report keeps crashing, remove plugins from oracle middleware folder, 2 files with the same name. cauprefes.ora >>>> find this section
+"Reports.object_access = ()
+Reports.PluggableDataSourceFactories =  ("remove all the elements from this section")."
