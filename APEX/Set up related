@@ -1,0 +1,26 @@
+Oracle apex set up necessary files
+ 
+
+oracle apex 24.2                                                               --https://www.oracle.com/tools/downloads/apex-downloads/
+JDK any updated version (Java SE 17 Archive Downloads (17.0.12 and earlier))   --https://www.oracle.com/java/technologies/javase/jdk17-archive-downloads.html
+ORDS 24.2.3 (Oracle REST Data Services 24.2.3)                                 --https://www.oracle.com/technologies/appdev/rest-data-services-downloads-2423.html
+
+apex admin details
+user : admin
+email: asnasim46@gmail.com
+pass : Asn98feb27#
+
+
+C:/Oracle Apex/ords_24/images
+
+
+java -jar ords.war serve
+
+workspace details
+workspace name : ddd_r67
+
+schema name : ddd_r67
+schema pass : ddd_r67
+
+Administrator Username : ws_admin
+Administrator Password : ws_admin
