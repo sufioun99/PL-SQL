@@ -48,3 +48,35 @@ BEGIN
 v_seq := employees_seq.nextval;
 dbms_output.put_line('Second val:'||v_seq);
 end;
+
+--Assignement
+/*
+Assignment: Find the number of furniture sales (i.e., Leather Sofa) to a Customer (i.e., RICKY)
+
+Output should be like
+Customer RICKY has bought X number of Leather Sofa
+*/
+
+VARIABLE v_prod_id NUMBER;
+VARIABLE v_cust_name VARCHAR2;
+EXEC :v_prod_id := 20;
+EXEC :v_cust_name := 'JOHN';
+
+SET SERVEROUTPUT ON;
+DECLARE
+  ln_cnt NUMBER := 0;
+BEGIN
+--:v_prod_id := 10;
+--:v_cust_name := 'RICKY';
+
+SELECT SUM(quantity) INTO ln_cnt
+FROM lineitem l
+JOIN order_data o ON l.orderid = o.orderid
+JOIN customer c ON o.customerid = c.customerid
+JOIN products p ON l.productid = p.productid
+WHERE p.productid = :v_prod_id AND c.name = :v_cust_name;
+
+--Print the outout on screen
+DBMS_OUTPUT.PUT_LINE('Customer '||:v_cust_name||' has bought '|| ln_cnt ||' number of Leather Sofa');
+END;
+
