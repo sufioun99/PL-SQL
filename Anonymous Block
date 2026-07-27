@@ -11,3 +11,40 @@ dbms_output.put_line('Employee name is '||v1_name);
 dbms_output.put_line('Employee name is '||v2_rec.first_name||' sal: '||v2_rec.salary);
 END;
 
+--------------------------------------------SEQUENCES--------------------------
+CREATE SEQUENCE MY_SEQUENCE START WITH 1 INCREMENT BY 1;
+DECLARE
+    v_count NUMBER;
+BEGIN
+    -- Check if the sequence exists
+    SELECT COUNT(*) INTO v_count 
+    FROM user_sequences 
+    WHERE sequence_name = 'MY_SEQUENCE';
+
+    -- Drop it if it does
+    IF v_count > 0 THEN
+        EXECUTE IMMEDIATE 'DROP SEQUENCE MY_SEQUENCE';
+    END IF;
+
+    -- Create the new sequence
+    EXECUTE IMMEDIATE 'CREATE SEQUENCE MY_SEQUENCE START WITH 1 INCREMENT BY 1';
+END;
+/
+
+DROP SEQUENCE my_sequence;
+CREATE SEQUENCE my_sequence START WITH 1 INCREMENT BY 1;
+
+
+ALTER SEQUENCE my_sequence RESTART; 
+-- OR --
+ALTER SEQUENCE my_sequence RESTART START WITH 100;
+
+Declare
+v_seq number;
+BEGIN
+--select employees_seq.nextval into v_seq from dual;
+--dbms_output.put_line('First val:'||v_seq);
+
+v_seq := employees_seq.nextval;
+dbms_output.put_line('Second val:'||v_seq);
+end;
