@@ -1,0 +1,13 @@
+
+-------%type & &rowtype
+set serveroutput on;
+DECLARE
+v1_name Employees.first_name%TYPE;
+v2_rec employees%rowtype;
+BEGIN
+select first_name||' '||last_name into v1_name from employees where employee_id = 100;
+select * into v2_rec from employees where employee_id = 100;
+dbms_output.put_line('Employee name is '||v1_name);
+dbms_output.put_line('Employee name is '||v2_rec.first_name||' sal: '||v2_rec.salary);
+END;
+
