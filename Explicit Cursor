@@ -1,0 +1,183 @@
+/****************************
+--For UPDATE test script
+********************************/
+
+DECLARE
+    CURSOR cursor_name (p_seat_number VARCHAR2) IS
+		SELECT *
+		FROM FLIGHT_SEATS_MAP 
+		WHERE flight_id = 1 AND seat_no IN (p_seat_number) FOR UPDATE NOWAIT;
+    v_seat_no  VARCHAR2(10) := '04A';
+BEGIN
+
+  --Ticket booking happening here
+  FOR cur_rec IN cursor_name(v_seat_no) LOOP
+       
+       INSERT INTO FLIGHT_BOOKING VALUES (seq_booking_id.NEXTVAL, 1, 1, v_seat_no, SYSDATE);
+       --Let delay the execution for 10 seconds
+       SYS.DBMS_SESSION.SLEEP(10);	   
+  END LOOP;
+  --Commit to release the lock  
+  COMMIT;
+
+  DBMS_OUTPUT.PUT_LINE ('Booking successful for seat no - '||v_seat_no); 
+
+EXCEPTION
+  WHEN OTHERS THEN
+    DBMS_OUTPUT.PUT_LINE ('Seat - '||v_seat_no||' is being booked by an another user');   
+END;    
+    
+SELECT * FROM  FLIGHT_BOOKING;	
+------------------------------Cursor-----------------------------------------------
+DECLARE
+  CURSOR emp_cursor IS SELECT * FROM emp;
+  v_emp emp_cursor%rowtype;
+BEGIN
+
+	DBMS_OUTPUT.PUT_LINE ('**********************%ISOPEN Test***********************');
+	IF emp_cursor%ISOPEN THEN
+		NULL;
+	ELSE  
+		OPEN emp_cursor;
+	END IF;	
+
+	--WHILE emp_cursor%found
+	LOOP
+		FETCH emp_cursor into v_emp;
+		EXIT WHEN  emp_cursor%NOTFOUND;
+		DBMS_OUTPUT.PUT_LINE(v_emp.ename||','||v_emp.empno);
+	END LOOP;
+
+	DBMS_OUTPUT.PUT_LINE ('*******************%ROWCOUNT Test***********************');
+	DBMS_OUTPUT.PUT_LINE('Total records in emp table - '||emp_cursor%ROWCOUNT);
+	CLOSE emp_cursor;
+    DBMS_OUTPUT.PUT_LINE ('******%NOTFOUND Test - Reached the end of cursor********');
+END;
+/
+
+
+
+/****************************
+IF query of the cursor 
+1) returns 0 record then emp_cursor%FOUND will be FALSE
+2) returns 1 or more record then emp_cursor%FOUND will be TRUE
+
+*/
+
+DECLARE
+  CURSOR emp_cursor IS SELECT * FROM emp WHERE empno = 1001; --7369
+  v_emp emp_cursor%rowtype;
+BEGIN
+    OPEN emp_cursor;
+    FETCH emp_cursor INTO v_emp;
+	
+	DBMS_OUTPUT.PUT_LINE ('**********************%FOUND Test***********************');
+	IF emp_cursor%FOUND THEN
+		DBMS_OUTPUT.PUT_LINE ('emp_cursor%FOUND :'||'TRUE'); 
+	ELSE  
+		DBMS_OUTPUT.PUT_LINE ('emp_cursor%FOUND :'||'FALSE');
+	END IF;	
+
+END;
+
+/*
+SELECT * FROM emp WHERE empno = 1001 -- No Record
+SELECT * FROM emp WHERE empno = 7369 -- 1 Record
+*/
+
+
+SET SERVEROUTPUT ON;
+DECLARE
+    CURSOR emp_cursor (v_deptno NUMBER) IS 
+        SELECT * FROM emp WHERE deptno = v_deptno;
+BEGIN
+    -- The FOR loop automatically opens, fetches, passes the parameter, and closes!
+    FOR v_emp IN emp_cursor(10) LOOP
+        DBMS_OUTPUT.PUT_LINE(v_emp.ename || ',' || v_emp.empno);
+    END LOOP;
+END;
+/
+
+SET SERVEROUTPUT ON;
+BEGIN
+    FOR v_emp IN (SELECT * FROM emp) LOOP
+        DBMS_OUTPUT.PUT_LINE(v_emp.ename || ' ' || v_emp.empno);
+    END LOOP;
+END;
+/
+
+SET SERVEROUTPUT ON;
+DECLARE
+cursor emp_cursor (v_deptno number)
+IS 
+SELECT * from emp where deptno = v_deptno;
+v_emp emp_cursor%rowtype;
+BEGIN
+open emp_cursor (10);
+LOOP
+fetch emp_cursor into v_emp;
+EXIT WHEN emp_cursor%notfound;
+DBMS_OUTPUT.PUT_LINE(v_emp.ename||','||v_emp.empno);
+END LOOP;
+CLOSE emp_cursor;
+END;
+/
+
+
+SET SERVEROUTPUT ON;
+DECLARE
+    CURSOR emp_cursor IS 
+        SELECT * FROM emp;
+    v_emp emp_cursor%ROWTYPE;
+BEGIN
+    OPEN emp_cursor;
+    LOOP
+        FETCH emp_cursor INTO v_emp;
+        EXIT WHEN emp_cursor%NOTFOUND;
+        DBMS_OUTPUT.PUT_LINE(v_emp.ename || ' ' || v_emp.empno);
+    END LOOP;
+    CLOSE emp_cursor;
+END;
+/
+
+SET SERVEROUTPUT ON;
+DECLARE
+    v_sal NUMBER := 0;
+    v_emp_id number(6) := 7369;
+BEGIN
+ Select sal into v_sal from emp where empno =  v_emp_id ;
+ case  
+ when v_sal >= 500 and v_sal <= 1250 then —-- can be written Between—and— 
+ DBMS_OUTPUT.PUT_LINE('Employee number '||v_emp_id||' Salary grade 1');
+  when v_sal >= 1251 and v_sal <= 2000 then 
+ DBMS_OUTPUT.PUT_LINE('Salary grade 2');
+  when v_sal >= 2001 and v_sal <= 5000 then 
+ DBMS_OUTPUT.PUT_LINE('Salary grade 3');
+    END CASE;
+END;
+/
+---------------For LOOP----------------------------
+SET SERVEROUTPUT ON;
+DECLARE
+    v_count NUMBER := 0;
+BEGIN
+ For i IN 1..10 LOOP
+ IF mod(i,2) = 0 THEN
+ Continue;
+ END IF;
+ DBMS_OUTPUT.PUT_LINE(i);
+    END loop;
+END;
+/
+
+
+SET SERVEROUTPUT ON;
+DECLARE
+    v_count NUMBER := 0;
+BEGIN
+ For i IN 1..10 LOOP
+ Continue when mod(i,2) = 1;
+ DBMS_OUTPUT.PUT_LINE(i);
+    END loop;
+END;
+/

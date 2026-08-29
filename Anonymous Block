@@ -1,0 +1,82 @@
+
+-------%type & &rowtype
+set serveroutput on;
+DECLARE
+v1_name Employees.first_name%TYPE;
+v2_rec employees%rowtype;
+BEGIN
+select first_name||' '||last_name into v1_name from employees where employee_id = 100;
+select * into v2_rec from employees where employee_id = 100;
+dbms_output.put_line('Employee name is '||v1_name);
+dbms_output.put_line('Employee name is '||v2_rec.first_name||' sal: '||v2_rec.salary);
+END;
+
+--------------------------------------------SEQUENCES--------------------------
+CREATE SEQUENCE MY_SEQUENCE START WITH 1 INCREMENT BY 1;
+DECLARE
+    v_count NUMBER;
+BEGIN
+    -- Check if the sequence exists
+    SELECT COUNT(*) INTO v_count 
+    FROM user_sequences 
+    WHERE sequence_name = 'MY_SEQUENCE';
+
+    -- Drop it if it does
+    IF v_count > 0 THEN
+        EXECUTE IMMEDIATE 'DROP SEQUENCE MY_SEQUENCE';
+    END IF;
+
+    -- Create the new sequence
+    EXECUTE IMMEDIATE 'CREATE SEQUENCE MY_SEQUENCE START WITH 1 INCREMENT BY 1';
+END;
+/
+
+DROP SEQUENCE my_sequence;
+CREATE SEQUENCE my_sequence START WITH 1 INCREMENT BY 1;
+
+
+ALTER SEQUENCE my_sequence RESTART; 
+-- OR --
+ALTER SEQUENCE my_sequence RESTART START WITH 100;
+
+Declare
+v_seq number;
+BEGIN
+--select employees_seq.nextval into v_seq from dual;
+--dbms_output.put_line('First val:'||v_seq);
+
+v_seq := employees_seq.nextval;
+dbms_output.put_line('Second val:'||v_seq);
+end;
+
+--Assignement
+/*
+Assignment: Find the number of furniture sales (i.e., Leather Sofa) to a Customer (i.e., RICKY)
+
+Output should be like
+Customer RICKY has bought X number of Leather Sofa
+*/
+
+VARIABLE v_prod_id NUMBER;
+VARIABLE v_cust_name VARCHAR2;
+EXEC :v_prod_id := 20;
+EXEC :v_cust_name := 'JOHN';
+
+SET SERVEROUTPUT ON;
+DECLARE
+  ln_cnt NUMBER := 0;
+BEGIN
+--:v_prod_id := 10;
+--:v_cust_name := 'RICKY';
+
+SELECT SUM(quantity) INTO ln_cnt
+FROM lineitem l
+JOIN order_data o ON l.orderid = o.orderid
+JOIN customer c ON o.customerid = c.customerid
+JOIN products p ON l.productid = p.productid
+WHERE p.productid = :v_prod_id AND c.name = :v_cust_name;
+
+--Print the outout on screen
+DBMS_OUTPUT.PUT_LINE('Customer '||:v_cust_name||' has bought '|| ln_cnt ||' number of Leather Sofa');
+END;
+
